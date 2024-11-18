@@ -69,6 +69,9 @@ taken:
 # There should be no stalls
 # ----------------------------------------------------------------------------------------
     # nop instructions added between examples
+    addi t7, s3, 5       # t7 = s3 + 5
+    add  t8, t7, s1      # Intermediate instruction, does not depend on t7
+    sub  t9, t7, s2      # t9 = t7 - s2 (result of t7 should be forwarded here)
     add  zero, zero, zero  
     add  zero, zero, zero  
     add  zero, zero, zero  
@@ -80,6 +83,9 @@ taken:
 # There should be no stalls
 # ----------------------------------------------------------------------------------------
     # nop instructions added between examples
+    addi t0, zero, 3     # t0 = 3
+    add  t0, t0, s1      # t0 = t0 + s1 (new value: t0)
+    sub  t1, t0, s2      # t1 = t0 - s2 (the most recent value of t0 should be forwarded here)
     add  zero, zero, zero  
     add  zero, zero, zero  
     add  zero, zero, zero  
@@ -89,6 +95,9 @@ taken:
 #  Is this a data hazard or a control hazard?
 # ----------------------------------------------------------------------------------------
     # nop instructions added between examples
+    lw   t2, 8(a0)       # t2 = storage[2] = 11
+    beq  t2, zero, label # If t2 == 0, jump to label (but this will not happen here)
+    addi t3, t2, 5       # t3 = t2 + 5 (this should execute as the branch is not taken)
     add  zero, zero, zero  
     add  zero, zero, zero  
     add  zero, zero, zero  
@@ -96,6 +105,10 @@ taken:
 # ----------------------------------------------------------------------------------------
 # TODO: Add an example with taken branch to a label which is immediately following the branch
 # ----------------------------------------------------------------------------------------
+	beq  s1, s1, next    # Always true, jump to the "next" label
+    nop                  # This instruction should not execute
+next:
+    addi t4, s2, 10      # t4 = s2 + 10
 
 
 
